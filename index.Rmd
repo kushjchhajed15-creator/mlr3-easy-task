@@ -1,0 +1,54 @@
+
+---
+title: "GSoC 2026: mlr3 Integration - Easy Task"
+author: "KUSHAL CHHAJED"
+date: "January 30, 2026"
+output: html_document
+---
+
+#             1] My Logic & Dataset Choice
+
+## 1. Iris (ID 59)
+I used this as a control to verify that `mlr3oml` is pulling data correctly from the OpenML API. It serves as the standard benchmark for the `otsk()` function.
+
+## 2. Pen vs. Pencil
+I designed this custom task to verify my own understanding of how `mlr3` handles mixed feature types. By creating a dataset from scratch with specific attributes (length, ink, material), I could confirm that the task construction logic works exactly as intended before moving on to larger datasets.
+
+---
+
+#                     2] Implementation
+
+In this section, we load the core `mlr3` libraries and execute the task creation logic.
+
+```{r setup, message=FALSE, warning=FALSE}
+# Loading core libraries
+library(mlr3)
+library(mlr3oml)
+library(data.table)
+ 
+task_iris = as_task(otsk(id = 59))
+print(task_iris)
+
+# Building the dataset from scratch
+stationery_data = data.table(
+  length_cm     = c(14.5, 15.0, 13.8, 17.5, 18.2, 19.1),
+  has_ink       = factor(c("Yes", "Yes", "Yes", "No", "No", "No")),
+  has_eraser    = factor(c("No", "No", "No", "Yes", "Yes", "Yes")),
+  body_material = factor(c("Plastic", "Plastic", "Metal", "Wood", "Wood", "Wood")),
+  label         = factor(c("Pen", "Pen", "Pen", "Pencil", "Pencil", "Pencil"))
+)
+
+# Creating the classification task
+task_pen_pencil = as_task_classif(stationery_data, target = "label", id = "pen_vs_pencil")
+
+# Printing task details to verify construction
+print(task_pen_pencil)
+```
+
+---
+
+#              4]  Note: Dataset Selection Rationale
+
+While datasets like **TITANIC** or **CREDIT-G** are common choices, I opted for a custom-built **PEN VS. PENCIL** task. 
+
+This decision was made to move beyond standard benchmarks and demonstrate a deeper grasp of the `mlr3` workflow. By defining my own features from scratch, I can verify that the conversion from a raw `data.table` to an `mlr3` task functions perfectly with specific data types I controlled, ensuring a more rigorous test of the underlying logic.
